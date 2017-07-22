@@ -1,7 +1,0 @@
-objective_forms.test:
-  path: '/objective/forms/test/{form_name}'
-  defaults:
-    _title: 'Test Form Used By SimpleTest'
-    _controller: '\Drupal\objective_forms\Controller\DefaultController::objective_forms_test'
-  requirements:
-    _permission: 'access content'
