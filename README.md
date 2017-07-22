@@ -1,4 +1,4 @@
-# Objective Forms [![Build Status](https://travis-ci.org/Islandora/objective_forms.png?branch=7.x)](https://travis-ci.org/Islandora/objective_forms)
+# Objective Forms
 
 ## Introduction
 
