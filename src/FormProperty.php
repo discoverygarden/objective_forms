@@ -1,9 +1,5 @@
 <?php
-
-/**
- * @file
- * Converts form properties into objects.
- */
+namespace Drupal\objective_forms;
 
 /**
  * A collection of static functions to help with processing for properties.

@@ -1,12 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a class that can be used to dynamically populate the default values
- * of a Drupal Form, from the submitted POST data.
- */
-
-module_load_include('inc', 'objective_forms', 'FormValues');
+namespace Drupal\objective_forms;
 
 /**
  * Used to populate a Drupal Form with values submitted as POST data.

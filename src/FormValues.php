@@ -1,12 +1,5 @@
 <?php
-
-/**
- * @file
- * Associates submitted form values with array.
- */
-
-module_load_include('inc', 'objective_forms', 'FormValueTracker');
-module_load_include('inc', 'php_lib', 'DrupalFormHelpers');
+namespace Drupal\objective_forms;
 
 /**
  * This class stores all submitted values. It provides a mechanism for

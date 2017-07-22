@@ -1,16 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a FormElement class for encapsulating Drupal form elements. Each
- * FormElement class has a unique #hash property that can be used to identify
- * that FormElement.
- */
-
-module_load_include('inc', 'php_lib', 'ReflectionHelpers');
-module_load_include('inc', 'php_lib', 'ReadOnlyProtectedMembers');
-module_load_include('inc', 'objective_forms', 'Utils');
-module_load_include('inc', 'objective_forms', 'FormElementRegistry');
+namespace Drupal\objective_forms;
 
 /**
  * Encapsulates drupal form elements.
