@@ -1,16 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a FormElement class for encapsulating Drupal form elements. Each
- * FormElement class has a unique #hash property that can be used to identify
- * that FormElement.
- */
-
-module_load_include('inc', 'php_lib', 'ReflectionHelpers');
-module_load_include('inc', 'php_lib', 'ReadOnlyProtectedMembers');
-module_load_include('inc', 'objective_forms', 'Utils');
-module_load_include('inc', 'objective_forms', 'FormElementRegistry');
+namespace Drupal\objective_forms;
 
 /**
  * Encapsulates drupal form elements.
@@ -115,7 +104,7 @@ class FormElement implements ArrayAccess {
    */
   protected function initializeControls(array &$form) {
     module_load_include('inc', 'objective_forms', 'FormProperty');
-    $properties = element_properties($form);
+    $properties = \Drupal\Core\Render\Element::properties($form);
     foreach ($properties as $key) {
       // Objectify the property where appropriate.
       $this->controls[$key] = FormProperty::Expand($key, $form[$key]);
@@ -133,7 +122,7 @@ class FormElement implements ArrayAccess {
    *   Drupal form definition.
    */
   protected function initializeChildren(array &$form) {
-    $children = element_children($form);
+    $children = \Drupal\Core\Render\Element::children($form);
     foreach ($children as $key) {
       $child = new FormElement($this->registry, $form[$key], $key);
       $this->adopt($child, $key);
@@ -509,7 +498,7 @@ class FormElement implements ArrayAccess {
     if (is_or_descends_from($value, 'FormElement')) {
       $this->adopt($value, $offset);
     }
-    elseif (element_property($offset)) {
+    elseif (\Drupal\Core\Render\Element::property($offset)) {
       $this->controls[$offset] = $value;
     }
   }

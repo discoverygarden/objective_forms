@@ -1,4 +1,4 @@
-# Objective Forms [![Build Status](https://travis-ci.org/Islandora/objective_forms.png?branch=7.x)](https://travis-ci.org/Islandora/objective_forms)
+# Objective Forms
 
 ## Introduction
 
@@ -22,10 +22,6 @@ This module requires the following modules/libraries:
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
 
-## Configuration
-
-N/A
-
 ## Documentation
 
 Further documentation for this module is available at [our wiki](https://wiki.duraspace.org/display/ISLANDORA/Objective+Forms).
@@ -36,12 +32,6 @@ Having problems or solved a problem? Check out the Islandora google groups for a
 
 * [Islandora Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
 * [Islandora Dev Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
-
-## Maintainers/Sponsors
-
-Current maintainers:
-
-* [Diego Pino](https://github.com/diegopino)
 
 ## Development
 

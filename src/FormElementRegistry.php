@@ -1,13 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a class used to keep track of all the FormElements created/cloned
- * during the Form rendering/submission process.
- */
-
-module_load_include('inc', 'objective_forms', 'FormElement');
-module_load_include('inc', 'objective_forms', 'FormStorage');
+namespace Drupal\objective_forms;
 
 /**
  * A class that holds a flat array of all FormElements created/cloned during

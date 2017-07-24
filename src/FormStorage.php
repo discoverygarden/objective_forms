@@ -1,10 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a class that is used to persist data for Drupal Forms across
- * requests.
- */
+namespace Drupal\objective_forms;
 
 /**
  * Stores data in the $form_state['storage'] for use in building/rendering the

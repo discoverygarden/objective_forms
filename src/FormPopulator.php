@@ -1,12 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a class that can be used to dynamically populate the default values
- * of a Drupal Form, from the submitted POST data.
- */
-
-module_load_include('inc', 'objective_forms', 'FormValues');
+namespace Drupal\objective_forms;
 
 /**
  * Used to populate a Drupal Form with values submitted as POST data.
@@ -43,7 +36,7 @@ class FormPopulator {
    *   The populated Drupal Form.
    */
   public function populate(array &$form) {
-    $children = element_children($form);
+    $children = \Drupal\Core\Render\Element::children($form);
     foreach ($children as $key) {
       $child = &$form[$key];
       $default_value = isset($child['#hash']) ? $this->values->getValue($child['#hash']) : NULL;

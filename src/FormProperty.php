@@ -1,9 +1,5 @@
 <?php
-
-/**
- * @file
- * Converts form properties into objects.
- */
+namespace Drupal\objective_forms;
 
 /**
  * A collection of static functions to help with processing for properties.
@@ -24,8 +20,8 @@ class FormProperty {
     static $cache;
     if (empty($cache)) {
       $cache = array();
-      foreach (module_implements('objectify_properties') as $module) {
-        $properties = module_invoke($module, 'objectify_properties');
+      foreach (\Drupal::moduleHandler()->getImplementations('objectify_properties') as $module) {
+        $properties = \Drupal::moduleHandler()->invoke($module, 'objectify_properties');
         if (isset($properties) && is_array($properties)) {
           $cache = array_merge_recursive($cache, $properties);
         }

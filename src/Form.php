@@ -1,18 +1,5 @@
 <?php
-
-/**
- * @file
- * Defines a class that allows drupal forms to be built via objects instead of
- * arrays. Note that is still possible to build non functional drupal forms
- * using this class, the same rules apply that would normally apply to a Drupal
- * API
- * Form.
- */
-
-module_load_include('inc', 'objective_forms', 'FormElement');
-module_load_include('inc', 'objective_forms', 'FormStorage');
-module_load_include('inc', 'objective_forms', 'FormElementRegistry');
-module_load_include('inc', 'objective_forms', 'FormPopulator');
+namespace Drupal\objective_forms;
 
 /**
  * A Container for all the FormElements that comprise the form.
@@ -68,9 +55,9 @@ class Form implements ArrayAccess {
     if (isset($form_state['triggering_element']['#ajax']['params'])) {
       if ($form['#hash'] == $form_state['triggering_element']['#ajax']['params']['target']) {
         $element = $this->findElement($form['#hash']);
-        drupal_alter("form_element_{$element->type}_ajax", $element, $form, $form_state);
+        \Drupal::moduleHandler()->alter("form_element_{$element->type}_ajax", $element, $form, $form_state);
       }
-      foreach (element_children($form) as $child) {
+      foreach (\Drupal\Core\Render\Element::children($form) as $child) {
         $this->ajaxAlter($form[$child], $form_state, $triggering_element);
       }
     }

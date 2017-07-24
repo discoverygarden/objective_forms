@@ -74,7 +74,7 @@ class FormValueTracker {
     }
 
     $form_element = $this->registry->get($element['#hash']);
-    $value = drupal_array_get_nested_value($this->current, $form_element->getParentsArray());
+    $value = \Drupal\Component\Utility\NestedArray::getValue($this->current, $form_element->getParentsArray());
     return is_array($value) ? NULL : $value;
   }
 }

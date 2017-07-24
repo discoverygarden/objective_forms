@@ -1,12 +1,5 @@
 <?php
-
-/**
- * @file
- * Associates submitted form values with array.
- */
-
-module_load_include('inc', 'objective_forms', 'FormValueTracker');
-module_load_include('inc', 'php_lib', 'DrupalFormHelpers');
+namespace Drupal\objective_forms;
 
 /**
  * This class stores all submitted values. It provides a mechanism for
@@ -69,7 +62,7 @@ class FormValues {
    */
   protected function setValues(array &$element, FormValueTracker $tracker) {
     $this->setValue($element, $tracker);
-    $children = element_children($element);
+    $children = \Drupal\Core\Render\Element::children($element);
     foreach ($children as $key) {
       $child = &$element[$key];
       $this->setValues($child, clone $tracker);

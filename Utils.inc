@@ -39,7 +39,7 @@ function &find_element(array &$form, $hash) {
  */
 function &find_child_element(array &$form, $hash) {
   $found = NULL;
-  $children = element_children($form);
+  $children = \Drupal\Core\Render\Element::children($form);
   foreach ($children as $key) {
     $child = &$form[$key];
     $found = has_hash($child, $hash) ? $child : find_child_element($child, $hash);
