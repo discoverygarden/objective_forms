@@ -4,7 +4,7 @@ namespace Drupal\objective_forms;
 /**
  * Encapsulates drupal form elements.
  */
-class FormElement implements ArrayAccess {
+class FormElement implements \ArrayAccess {
 
   /**
    * Holds references to protected variables. Allows for external access and

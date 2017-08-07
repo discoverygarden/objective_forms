@@ -4,7 +4,7 @@ namespace Drupal\objective_forms;
 /**
  * A Container for all the FormElements that comprise the form.
  */
-class Form implements ArrayAccess {
+class Form implements \ArrayAccess {
 
   /**
    * Stores persistent data.
