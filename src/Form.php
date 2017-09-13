@@ -1,6 +1,8 @@
 <?php
 namespace Drupal\objective_forms;
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * A Container for all the FormElements that comprise the form.
  */
@@ -32,10 +34,10 @@ class Form implements \ArrayAccess {
    *
    * @param array $form
    *   The drupal form.
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The drupal form state.
    */
-  public function __construct(array $form, array &$form_state, $parents = array()) {
+  public function __construct(array $form, FormStateInterface $form_state, $parents = array()) {
     $this->storage = new FormStorage($form_state);
     $this->storage->elementRegistry = isset($this->storage->elementRegistry) ?
         $this->storage->elementRegistry :
@@ -51,7 +53,7 @@ class Form implements \ArrayAccess {
    *
    * @var FormElementRegistry
    */
-  public function ajaxAlter(array &$form, array &$form_state, array $triggering_element) {
+  public function ajaxAlter(array &$form, FormStateInterface $form_state, array $triggering_element) {
     if (isset($form_state['triggering_element']['#ajax']['params'])) {
       if ($form['#hash'] == $form_state['triggering_element']['#ajax']['params']['target']) {
         $element = $this->findElement($form['#hash']);
@@ -151,10 +153,10 @@ class Form implements \ArrayAccess {
    *
    * @param array $form
    *   The form
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state
    */
-  public function validate(array &$form, array &$form_state) {
+  public function validate(array &$form, FormStateInterface $form_state) {
     // Implemented in child classes.
   }
 
@@ -163,10 +165,10 @@ class Form implements \ArrayAccess {
    *
    * @param array $form
    *   The form
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state
    */
-  public function submit(array &$form, array &$form_state) {
+  public function submit(array &$form, FormStateInterface $form_state) {
     // Implemented in child classes.
   }
 
@@ -176,7 +178,7 @@ class Form implements \ArrayAccess {
    * @return array
    *   returns the form
    */
-  public function toArray(array &$form_state) {
+  public function toArray(FormStateInterface $form_state) {
     $form = $this->root->toArray();
     if (isset($form_state['values'])) {
       // @todo see if its nesscary to store this varible with the instance.

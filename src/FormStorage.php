@@ -1,6 +1,8 @@
 <?php
 namespace Drupal\objective_forms;
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Stores data in the $form_state['storage'] for use in building/rendering the
  * Form.
@@ -19,29 +21,32 @@ class FormStorage {
    */
   protected $storage;
 
+  protected $form_state;
+
   /**
    * Creates the FormStorage Singleton.
    *
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
    */
-  public function __construct(array &$form_state) {
+  public function __construct(FormStateInterface $form_state) {
     $this->initializeFormState($form_state);
-    $this->storage = &$form_state['storage'][self::STORAGE_ROOT];
+    $this->storage = $form_state->get(['storage', self::STORAGE_ROOT]);
+    $this->form_state = $form_state;
   }
 
   /**
    * Creates the storage slot in the Drupal form state.
    *
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
    */
-  protected function initializeFormState(array &$form_state) {
-    if (empty($form_state['storage'])) {
-      $form_state['storage'] = array();
+  protected function initializeFormState(FormStateInterface $form_state) {
+    if (empty($form_state->get(['storage']))) {
+      $form_state->set(['storage'], []);
     }
-    if (empty($form_state['storage'][self::STORAGE_ROOT])) {
-      $form_state['storage'][self::STORAGE_ROOT] = array();
+    if (empty($form_state->get(['storage', self::STORAGE_ROOT]))) {
+      $form_state->set(['storage', self::STORAGE_ROOT], []);
     }
   }
 
@@ -94,6 +99,7 @@ class FormStorage {
    */
   public function __set($name, $value) {
     $this->storage[$name] = $value;
+    $this->form_state->set(['storage', self::STORAGE_ROOT, $name], $value);
   }
 
 }

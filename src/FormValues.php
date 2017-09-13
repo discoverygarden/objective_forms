@@ -1,6 +1,8 @@
 <?php
 namespace Drupal\objective_forms;
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * This class stores all submitted values. It provides a mechanism for
  * accessing submitted values with the FormElements hashes.
@@ -24,29 +26,29 @@ class FormValues {
   /**
    * Checks to see if any form values were submitted to the server.
    *
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
    *
    * @return bool
    *   TRUE if $form_state['values'] exists, FALSE otherwise.
    */
-  public static function Exists(array &$form_state) {
-    return isset($form_state['values']);
+  public static function Exists(FormStateInterface $form_state) {
+    return $form_state->get('values') ? TRUE : FALSE;
   }
 
   /**
    * Create a FormValues instance.
    *
-   * @param array $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Drupal Form state.
    *
    * @param array $root
    *   The elements to associate with submitted values.
    */
-  public function __construct(array &$form_state, array &$root, FormElementRegistry $registry) {
+  public function __construct(FormStateInterface $form_state, array &$root, FormElementRegistry $registry) {
     $this->values = array();
     if (self::Exists($form_state)) {
-      $this->tracker = new FormValueTracker($form_state['values'], $registry);
+      $this->tracker = new FormValueTracker($form_state->get('values'), $registry);
       $this->setValues($root, $this->tracker);
     }
   }
