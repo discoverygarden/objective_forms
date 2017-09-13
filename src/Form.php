@@ -180,7 +180,7 @@ class Form implements \ArrayAccess {
    */
   public function toArray(FormStateInterface $form_state) {
     $form = $this->root->toArray();
-    if (isset($form_state['values'])) {
+    if ($form_state->get('values')) {
       // @todo see if its nesscary to store this varible with the instance.
       module_load_include('inc', 'objective_forms', 'FormPopulator');
       $populator = new FormPopulator(new FormValues($form_state, $form, $this->registry), $form_state);
