@@ -33,7 +33,7 @@ class FormValues {
    *   TRUE if $form_state['values'] exists, FALSE otherwise.
    */
   public static function Exists(FormStateInterface $form_state) {
-    return $form_state->get('values') ? TRUE : FALSE;
+    return $form_state->getValues() ? TRUE : FALSE;
   }
 
   /**
@@ -48,7 +48,7 @@ class FormValues {
   public function __construct(FormStateInterface $form_state, array &$root, FormElementRegistry $registry) {
     $this->values = array();
     if (self::Exists($form_state)) {
-      $this->tracker = new FormValueTracker($form_state->get('values'), $registry);
+      $this->tracker = new FormValueTracker($form_state->getValues(), $registry);
       $this->setValues($root, $this->tracker);
     }
   }
