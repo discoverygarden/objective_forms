@@ -1,6 +1,8 @@
 <?php
 namespace Drupal\objective_forms;
 
+use Drupal\php_lib\ReadOnlyProtectedMembers;
+
 /**
  * Encapsulates drupal form elements.
  */

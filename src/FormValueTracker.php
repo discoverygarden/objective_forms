@@ -5,8 +5,7 @@
  * Defines the FormValueTracker class that is used by only the FormValues class.
  */
 
-module_load_include('inc', 'objective_forms', 'FormElement');
-module_load_include('inc', 'objective_forms', 'FormElementRegistry');
+namespace Drupal\objective_forms;
 
 /**
  * This class utilizes scope and a reference pointer to track where
