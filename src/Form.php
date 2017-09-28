@@ -54,8 +54,8 @@ class Form implements \ArrayAccess {
    * @var FormElementRegistry
    */
   public function ajaxAlter(array &$form, FormStateInterface $form_state, array $triggering_element) {
-    if (isset($form_state['triggering_element']['#ajax']['params'])) {
-      if ($form['#hash'] == $form_state['triggering_element']['#ajax']['params']['target']) {
+    if (isset($triggering_element['#ajax']['params'])) {
+      if ($form['#hash'] == $triggering_element['#ajax']['params']['target']) {
         $element = $this->findElement($form['#hash']);
         \Drupal::moduleHandler()->alter("form_element_{$element->type}_ajax", $element, $form, $form_state);
       }
@@ -185,8 +185,9 @@ class Form implements \ArrayAccess {
       module_load_include('inc', 'objective_forms', 'FormPopulator');
       $populator = new FormPopulator(new FormValues($form_state, $form, $this->registry), $form_state);
       $populator->populate($form);
-      if (isset($form_state['triggering_element']) && array_key_exists('#ajax', $form_state['triggering_element'])) {
-        $this->ajaxAlter($form, $form_state, $form_state['triggering_element']);
+      $triggering_element = $form_state->getTriggeringElement();
+      if ($triggering_element && array_key_exists('#ajax', $triggering_element)) {
+        $this->ajaxAlter($form, $form_state, $triggering_element);
       }
     }
     return $form;
