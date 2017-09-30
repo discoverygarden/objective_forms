@@ -51,7 +51,7 @@ function &find_child_element(array &$form, $hash) {
 }
 
 /**
- * Functin has_hash.
+ * Function has_hash.
  *
  * Checks to see if the given drupal form element has a #hash property and
  * checks to see if it matches the given hash.
