@@ -2,8 +2,9 @@
 
 /**
  * @file
- * Defines an Interface for converting FormElement properties dynamically into
- * Object and back into Scalar Values.
+ * Interface for converting FormElement propertiesi.
+ *
+ * Converts into/between object/scalar values.
  */
 
 /**
@@ -18,7 +19,7 @@ interface FormPropertyInterface {
    * Property value.
    *
    * @param mixed $value
-   *   The value
+   *   The value.
    */
   public function __construct($value);
 
@@ -30,4 +31,5 @@ interface FormPropertyInterface {
    *   within a Drupal Form.
    */
   public function toDrupalForm();
+
 }
