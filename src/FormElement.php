@@ -392,7 +392,7 @@ class FormElement implements \ArrayAccess {
       $this->protected->$name = $value;
     }
     else {
-      $name = is_or_descends_from($value, 'FormElement') ? $name : "#$name";
+      $name = is_or_descends_from($value, 'Drupal\objective_forms\FormElement') ? $name : "#$name";
       $this->offsetSet($name, $value);
     }
   }
@@ -497,7 +497,7 @@ class FormElement implements \ArrayAccess {
    *   control/property.
    */
   public function offsetSet($offset, $value) {
-    if (is_or_descends_from($value, 'FormElement')) {
+    if (is_or_descends_from($value, 'Drupal\objective_forms\FormElement')) {
       $this->adopt($value, $offset);
     }
     elseif (\Drupal\Core\Render\Element::property($offset)) {
