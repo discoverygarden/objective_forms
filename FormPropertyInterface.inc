@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Interface for converting FormElement propertiesi.
+ * Interface for converting FormElement properties.
  *
  * Converts into/between object/scalar values.
  */
