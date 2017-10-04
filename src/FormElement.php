@@ -63,16 +63,16 @@ class FormElement implements \ArrayAccess {
    * @param array $form
    *   Drupal form definition.
    */
-  public function __construct(FormElementRegistry $registry = NULL /* yuck fix this.. */, array $form = NULL, $index = NULL, $parents = array()) {
-    $this->protected = new ReadOnlyProtectedMembers(array(
+  public function __construct(FormElementRegistry $registry = NULL /* yuck fix this.. */, array $form = NULL, $index = NULL, $parents = []) {
+    $this->protected = new ReadOnlyProtectedMembers([
       'parent' => NULL,
       'hash' => NULL,
       'parentOffset' => $parents,
       'originalDefaultValue' => NULL,
-    ));
+    ]);
     $this->registry = $registry;
-    $this->controls = array();
-    $this->children = array();
+    $this->controls = [];
+    $this->children = [];
     $this->initialize($form);
     $this->hash = isset($this->controls['#hash']) ? $this->controls['#hash'] : spl_object_hash($this);
     // Deals with this case this class is used in a non user context ....
@@ -155,7 +155,7 @@ class FormElement implements \ArrayAccess {
     }
     // Clone Children.
     $children = $this->children;
-    $this->children = array();
+    $this->children = [];
     // Clone Children.
     foreach ($children as $key => $child) {
       $this->adopt(clone $child, $key);
@@ -203,7 +203,7 @@ class FormElement implements \ArrayAccess {
    *   array(#hash=>FormElement)
    */
   public function flatten() {
-    $elements = array();
+    $elements = [];
     $elements[$this->hash] = $this;
     foreach ($this->children as $child) {
       $elements = array_merge($elements, $child->flatten());
@@ -235,7 +235,7 @@ class FormElement implements \ArrayAccess {
     // Remove function name from the argument list.
     $param_arr = array_slice(func_get_args(), 1);
     foreach ($this->children as $child) {
-      $args = array_merge(array($child), $param_arr);
+      $args = array_merge([$child], $param_arr);
       if (call_user_func_array($function, $args) === FALSE) {
         return FALSE;
       }
@@ -392,7 +392,7 @@ class FormElement implements \ArrayAccess {
       $this->protected->$name = $value;
     }
     else {
-      $name = is_or_descends_from($value, 'FormElement') ? $name : "#$name";
+      $name = is_or_descends_from($value, __CLASS__) ? $name : "#$name";
       $this->offsetSet($name, $value);
     }
   }
@@ -497,7 +497,7 @@ class FormElement implements \ArrayAccess {
    *   control/property.
    */
   public function offsetSet($offset, $value) {
-    if (is_or_descends_from($value, 'FormElement')) {
+    if (is_or_descends_from($value, __CLASS__)) {
       $this->adopt($value, $offset);
     }
     elseif (\Drupal\Core\Render\Element::property($offset)) {

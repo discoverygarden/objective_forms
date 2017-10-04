@@ -42,8 +42,8 @@ class FormStorage {
    *   The Drupal Form State.
    */
   protected function initializeFormState(FormStateInterface $form_state) {
-    if (empty($form_state->get(['storage']))) {
-      $form_state->set(['storage'], []);
+    if (empty($form_state->get('storage'))) {
+      $form_state->set('storage', []);
     }
     if (empty($form_state->get(['storage', self::STORAGE_ROOT]))) {
       $form_state->set(['storage', self::STORAGE_ROOT], []);

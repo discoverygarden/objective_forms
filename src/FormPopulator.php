@@ -1,5 +1,8 @@
 <?php
+
 namespace Drupal\objective_forms;
+
+use Drupal\Core\Render\Element;
 
 /**
  * Used to populate a Drupal Form with values submitted as POST data.
@@ -36,7 +39,7 @@ class FormPopulator {
    *   The populated Drupal Form.
    */
   public function populate(array &$form) {
-    $children = \Drupal\Core\Render\Element::children($form);
+    $children = Element::children($form);
     foreach ($children as $key) {
       $child = &$form[$key];
       $default_value = isset($child['#hash']) ? $this->values->getValue($child['#hash']) : NULL;
