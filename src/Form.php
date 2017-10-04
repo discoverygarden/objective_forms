@@ -2,11 +2,15 @@
 namespace Drupal\objective_forms;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\encryption\EncryptionTrait;
 
 /**
  * A Container for all the FormElements that comprise the form.
  */
 class Form implements \ArrayAccess {
+  use EncryptionTrait;
+
+  const INFO_STASH = 'objective_forms_info_stash';
 
   /**
    * Stores persistent data.
@@ -38,7 +42,14 @@ class Form implements \ArrayAccess {
    *   The drupal form state.
    */
   public function __construct(array $form, FormStateInterface $form_state, $parents = array()) {
-    $this->storage = new FormStorage($form_state);
+    // XXX: We need to pull direct from input, as the form structure has not
+    // yet been processed in order to obtain things through getValue(s), and
+    // _cannot_ have been, since this gets into the issues with using hashes
+    // consistently.
+    $input = $form_state->getUserInput();
+    $info = isset($input[static::INFO_STASH]) ? unserialize($this->decrypt($input[static::INFO_STASH])) : [];
+
+    $this->storage = new FormStorage($form_state, $info);
     $this->storage->elementRegistry = isset($this->storage->elementRegistry) ?
         $this->storage->elementRegistry :
         new FormElementRegistry();
@@ -190,7 +201,22 @@ class Form implements \ArrayAccess {
         $this->ajaxAlter($form, $form_state, $triggering_element);
       }
     }
+
+    $form[static::INFO_STASH] = [
+      '#type' => 'hidden',
+      '#after_build' => [
+        [$this, 'populateElementInfo'],
+      ],
+      '#value' => $this->encrypt(serialize([])),
+      '#weight' => 10000,
+    ];
+
     return $form;
+  }
+
+  public function populateElementInfo($element, $form_state) {
+    $element['#value'] = $this->encrypt(serialize($form_state->get(['storage', FormStorage::STORAGE_ROOT])));
+    return $element;
   }
 
   /**
