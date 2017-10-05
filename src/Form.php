@@ -202,6 +202,7 @@ class Form implements \ArrayAccess {
       }
     }
 
+    // XXX: Add in our base info to stash...
     $form[static::INFO_STASH] = [
       '#type' => 'hidden',
       '#after_build' => [
@@ -214,7 +215,13 @@ class Form implements \ArrayAccess {
     return $form;
   }
 
-  public function populateElementInfo($element, $form_state) {
+  /**
+   * Callback for #after_build for our "info stash" element.
+   *
+   * Serialize and encrypt (to prevent tampering) the info. This is presently
+   * necessary due to our use of request-specific IDs in AJAX.
+   */
+  public function populateElementInfo(array $element, FormStateInterface $form_state) {
     $element['#value'] = $this->encrypt(serialize($form_state->get(['storage', FormStorage::STORAGE_ROOT])));
     return $element;
   }
