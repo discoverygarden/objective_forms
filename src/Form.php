@@ -47,7 +47,7 @@ class Form implements \ArrayAccess {
     // _cannot_ have been, since this gets into the issues with using hashes
     // consistently.
     $input = $form_state->getUserInput();
-    $info = isset($input[static::INFO_STASH]) ? unserialize($this->decrypt($input[static::INFO_STASH])) : [];
+    $info = (isset($input[static::INFO_STASH]) && $input[static::INFO_STASH]) ? unserialize($this->decrypt($input[static::INFO_STASH])) : [];
 
     $this->storage = new FormStorage($form_state, $info);
     $this->storage->elementRegistry = isset($this->storage->elementRegistry) ?
@@ -208,7 +208,6 @@ class Form implements \ArrayAccess {
       '#after_build' => [
         [$this, 'populateElementInfo'],
       ],
-      '#value' => $this->encrypt(serialize([])),
       '#weight' => 10000,
     ];
 
