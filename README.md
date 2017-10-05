@@ -17,6 +17,7 @@ Some important notes:
 This module requires the following modules/libraries:
 
 * [PHP Lib](https://github.com/islandora/php_lib)
+* [Encryption](https://www.drupal.org/project/encryption)
 
 ## Installation
 
