@@ -29,6 +29,15 @@ Further documentation for this module is available at [our wiki](https://wiki.du
 
 ## Troubleshooting/Issues
 
+### AJAX Issues
+
+If the messages:
+* `AJAX form elements may not work as intended; notify an administrator.` or
+* `Producing tamper-resistant serialization failed: AJAX form elements may be broken. Has the "encryption" module been configured?`
+
+are reported, the `encryption` module has probably not been configured correctly. See its
+documentation regarding an "encryption key" in your `settings.php`.
+
 Having problems or solved a problem? Check out the Islandora google groups for a solution.
 
 * [Islandora Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)

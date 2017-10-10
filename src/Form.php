@@ -3,12 +3,16 @@ namespace Drupal\objective_forms;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\encryption\EncryptionTrait;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Logger\LoggerChannelTrait;
 
 /**
  * A Container for all the FormElements that comprise the form.
  */
 class Form implements \ArrayAccess {
   use EncryptionTrait;
+  use StringTranslationTrait;
+  use LoggerChannelTrait;
 
   const INFO_STASH = 'objective_forms_info_stash';
 
@@ -47,7 +51,12 @@ class Form implements \ArrayAccess {
     // _cannot_ have been, since this gets into the issues with using hashes
     // consistently.
     $input = $form_state->getUserInput();
-    $info = (isset($input[static::INFO_STASH]) && $input[static::INFO_STASH]) ? unserialize($this->decrypt($input[static::INFO_STASH])) : [];
+    $use_stash = isset($input[static::INFO_STASH]) &&
+      $input[static::INFO_STASH] &&
+      !$form_state->has(['storage', FormStorage::STORAGE_ROOT]);
+    $info = $use_stash ?
+      unserialize($this->decrypt($input[static::INFO_STASH])) :
+      [];
 
     $this->storage = new FormStorage($form_state, $info);
     $this->storage->elementRegistry = isset($this->storage->elementRegistry) ?
@@ -222,6 +231,12 @@ class Form implements \ArrayAccess {
    */
   public function populateElementInfo(array $element, FormStateInterface $form_state) {
     $element['#value'] = $this->encrypt(serialize($form_state->get(['storage', FormStorage::STORAGE_ROOT])));
+    if ($element['#value'] === NULL) {
+      // XXX: If the ::encrypt() call fails (due to the module not being
+      // configured, the call returns NULL.
+      drupal_set_message($this->t('AJAX form elements may not work as intended; notify an administrator.'), 'warning');
+      $this->getLogger('objective_forms')->error('Producing tamper-resistant serialization failed: AJAX form elements may be broken. Has the "encryption" module been configured?');
+    }
     return $element;
   }
 
