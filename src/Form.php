@@ -2,11 +2,19 @@
 namespace Drupal\objective_forms;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\encryption\EncryptionTrait;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Logger\LoggerChannelTrait;
 
 /**
  * A Container for all the FormElements that comprise the form.
  */
 class Form implements \ArrayAccess {
+  use EncryptionTrait;
+  use StringTranslationTrait;
+  use LoggerChannelTrait;
+
+  const INFO_STASH = 'objective_forms_info_stash';
 
   /**
    * Stores persistent data.
@@ -38,7 +46,19 @@ class Form implements \ArrayAccess {
    *   The drupal form state.
    */
   public function __construct(array $form, FormStateInterface $form_state, $parents = array()) {
-    $this->storage = new FormStorage($form_state);
+    // XXX: We need to pull direct from input, as the form structure has not
+    // yet been processed in order to obtain things through getValue(s), and
+    // _cannot_ have been, since this gets into the issues with using hashes
+    // consistently.
+    $input = $form_state->getUserInput();
+    $use_stash = isset($input[static::INFO_STASH]) &&
+      $input[static::INFO_STASH] &&
+      !$form_state->has(['storage', FormStorage::STORAGE_ROOT]);
+    $info = $use_stash ?
+      unserialize($this->decrypt($input[static::INFO_STASH])) :
+      [];
+
+    $this->storage = new FormStorage($form_state, $info);
     $this->storage->elementRegistry = isset($this->storage->elementRegistry) ?
         $this->storage->elementRegistry :
         new FormElementRegistry();
@@ -190,7 +210,34 @@ class Form implements \ArrayAccess {
         $this->ajaxAlter($form, $form_state, $triggering_element);
       }
     }
+
+    // XXX: Add in our base info to stash...
+    $form[static::INFO_STASH] = [
+      '#type' => 'hidden',
+      '#after_build' => [
+        [$this, 'populateElementInfo'],
+      ],
+      '#weight' => 10000,
+    ];
+
     return $form;
+  }
+
+  /**
+   * Callback for #after_build for our "info stash" element.
+   *
+   * Serialize and encrypt (to prevent tampering) the info. This is presently
+   * necessary due to our use of request-specific IDs in AJAX.
+   */
+  public function populateElementInfo(array $element, FormStateInterface $form_state) {
+    $element['#value'] = $this->encrypt(serialize($form_state->get(['storage', FormStorage::STORAGE_ROOT])));
+    if ($element['#value'] === NULL) {
+      // XXX: If the ::encrypt() call fails (due to the module not being
+      // configured, the call returns NULL.
+      drupal_set_message($this->t('AJAX form elements may not work as intended; notify an administrator.'), 'warning');
+      $this->getLogger('objective_forms')->error('Producing tamper-resistant serialization failed: AJAX form elements may be broken. Has the "encryption" module been configured?');
+    }
+    return $element;
   }
 
   /**

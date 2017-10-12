@@ -17,6 +17,7 @@ Some important notes:
 This module requires the following modules/libraries:
 
 * [PHP Lib](https://github.com/islandora/php_lib)
+* [Encryption](https://www.drupal.org/project/encryption)
 
 ## Installation
 
@@ -27,6 +28,15 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 Further documentation for this module is available at [our wiki](https://wiki.duraspace.org/display/ISLANDORA/Objective+Forms).
 
 ## Troubleshooting/Issues
+
+### AJAX Issues
+
+If the messages:
+* `AJAX form elements may not work as intended; notify an administrator.` or
+* `Producing tamper-resistant serialization failed: AJAX form elements may be broken. Has the "encryption" module been configured?`
+
+are reported, the `encryption` module has probably not been configured correctly. See its
+documentation regarding an "encryption key" in your `settings.php`.
 
 Having problems or solved a problem? Check out the Islandora google groups for a solution.
 

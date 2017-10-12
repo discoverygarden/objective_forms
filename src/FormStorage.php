@@ -29,9 +29,9 @@ class FormStorage {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
    */
-  public function __construct(FormStateInterface $form_state) {
-    $this->initializeFormState($form_state);
-    $this->storage = $form_state->get(['storage', self::STORAGE_ROOT]);
+  public function __construct(FormStateInterface $form_state, $contents = []) {
+    $this->initializeFormState($form_state, $contents);
+    $this->storage =& $form_state->get(['storage', self::STORAGE_ROOT]);
     $this->form_state = $form_state;
   }
 
@@ -41,12 +41,9 @@ class FormStorage {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
    */
-  protected function initializeFormState(FormStateInterface $form_state) {
-    if (empty($form_state->get('storage'))) {
-      $form_state->set('storage', []);
-    }
-    if (empty($form_state->get(['storage', self::STORAGE_ROOT]))) {
-      $form_state->set(['storage', self::STORAGE_ROOT], []);
+  protected function initializeFormState(FormStateInterface $form_state, $contents = []) {
+    if (!$form_state->has(['storage', self::STORAGE_ROOT])) {
+      $form_state->set(['storage', self::STORAGE_ROOT], $contents);
     }
   }
 
@@ -99,7 +96,6 @@ class FormStorage {
    */
   public function __set($name, $value) {
     $this->storage[$name] = $value;
-    $this->form_state->set(['storage', self::STORAGE_ROOT, $name], $value);
   }
 
 }
