@@ -2,13 +2,20 @@
 
 ## Introduction
 
-The Objective Forms module contains a series of functions and classes that allow Drupal forms to be treated as Fedora objects. It provides back-end support to XML Forms so that Drupal's built-in form functions and classes can be used when filling out metadata.
+The Objective Forms module contains a series of functions and classes that allow
+Drupal forms to be treated as Fedora objects. It provides back-end support to
+XML Forms so that Drupal's built-in form functions and classes can be used when
+filling out metadata.
 
 Some important notes:
 
-* Each form element is assigned a unique hash Form Property to identify it, as #hash.
-* Each form element that is created is stored in a registry, and it will persist though out the lifetime of the form even if it's removed from the form. Ancestry of Form Elements is stored, so if a Form Element is cloned we will be able to determine the Form Element that is was cloned from.
-* Form Properties can be objects. To define new Form Properties, implement the hook `objectify_properties`.
+* Each form element is assigned a unique #hash Form Property to identify it.
+* Each form element is stored in a registry, and will persist through out the
+  lifetime of the form even if it's removed from the form. Ancestry of Form
+  Elements is stored, so if a Form Element is cloned we will be able to
+  determine the Form Element that is was cloned from.
+* Form Properties can be objects. To define new Form Properties, implement the
+  hook `objectify_properties`.
 * Forms will be auto-populated from `$form_states['values']`.
 * There is a FormStorage class that can be used to store any persistent data.
 
@@ -21,31 +28,49 @@ This module requires the following modules/libraries:
 
 ## Installation
 
-Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
+Install as usual, see
+[this](https://drupal.org/documentation/install/modules-themes/modules-7)
+for further information.
 
 ## Documentation
 
-Further documentation for this module is available at [our wiki](https://wiki.duraspace.org/display/ISLANDORA/Objective+Forms).
-
-## Troubleshooting/Issues
+Further documentation for this module is available at the
+[wiki](https://wiki.duraspace.org/display/ISLANDORA/Objective+Forms).
 
 ### AJAX Issues
 
 If the messages:
 * `AJAX form elements may not work as intended; notify an administrator.` or
-* `Producing tamper-resistant serialization failed: AJAX form elements may be broken. Has the "encryption" module been configured?`
+* `Producing tamper-resistant serialization failed: AJAX form elements may be
+  broken. Has the "encryption" module been configured?`
 
-are reported, the `encryption` module has probably not been configured correctly. See its
-documentation regarding an "encryption key" in your `settings.php`.
+are reported, the `encryption` module has probably not been configured
+correctly. See its documentation regarding an "encryption key" in your
+`settings.php`.
 
-Having problems or solved a problem? Check out the Islandora google groups for a solution.
+## Troubleshooting/Issues
 
-* [Islandora Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
-* [Islandora Dev Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
+Having problems or solved one? Create an issue, check out the Islandora Google
+groups.
+
+* [Users](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
+* [Devs](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
+
+or contact [discoverygarden](http://support.discoverygarden.ca).
+
+## Maintainers/Sponsors
+
+Current maintainers:
+
+* [discoverygarden](http://www.discoverygarden.ca)
 
 ## Development
 
-If you would like to contribute to this module, please check out [CONTRIBUTING.md](CONTRIBUTING.md). In addition, we have helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, as well as our [Developers](http://islandora.ca/developers) section on the [Islandora.ca](http://islandora.ca) site.
+If you would like to contribute to this module, please check out the helpful
+[Documentation](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers),
+[Developers](http://islandora.ca/developers) section on Islandora.ca and create
+an issue, pull request and or contact
+[discoverygarden](http://support.discoverygarden.ca).
 
 ## License
 
