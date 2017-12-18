@@ -16,7 +16,7 @@ class FormProperty {
    *   An array of information required to instantiate FormProperty classes
    *   where the names of the form properties are the keys in the array.
    */
-  public static function GetRegisteredFormPropertiesTypes() {
+  public static function getRegisteredFormPropertiesTypes() {
     static $cache;
     if (empty($cache)) {
       $cache = array();
@@ -39,8 +39,8 @@ class FormProperty {
    * @return bool
    *   TRUE if there is a registered class for the given form property.
    */
-  public static function IsRegisteredFormProperty($name) {
-    $properties = self::GetRegisteredFormPropertiesTypes();
+  public static function isRegisteredFormProperty($name) {
+    $properties = static::getRegisteredFormPropertiesTypes();
     return isset($properties[$name]);
   }
 
@@ -54,9 +54,9 @@ class FormProperty {
    *   The required information for loading and creating a given FormProperty if
    *   defined for the property $name.
    */
-  public static function GetProperty($name) {
-    if (self::IsRegisteredFormProperty($name)) {
-      $properties = self::GetRegisteredFormPropertiesTypes();
+  public static function getProperty($name) {
+    if (static::isRegisteredFormProperty($name)) {
+      $properties = static::getRegisteredFormPropertiesTypes();
       return $properties[$name];
     }
     return NULL;
@@ -70,8 +70,8 @@ class FormProperty {
    * @param string $name
    *   Name of the FormProperty to create.
    */
-  public static function LoadFile($name) {
-    $property = self::GetProperty($name);
+  public static function loadFile($name) {
+    $property = static::getProperty($name);
     if (isset($property)) {
       module_load_include($property['type'], $property['module'], $property['name']);
     }
@@ -88,8 +88,8 @@ class FormProperty {
    * @return object
    *   The class that repersents the given form property.
    */
-  public static function Create($name, $value) {
-    $property = self::GetProperty($name);
+  public static function create($name, $value) {
+    $property = static::getProperty($name);
     if (isset($property)) {
       $class = $property['class'];
       return new $class($value);
@@ -109,10 +109,10 @@ class FormProperty {
    *   If a FormProperty class is defined for $name, then a FormProperty object
    *   is returned, otherwise the parameter $value is returned.
    */
-  public static function Expand($name, $value) {
-    if (self::IsRegisteredFormProperty($name)) {
-      self::LoadFile($name);
-      return self::Create($name, $value);
+  public static function expand($name, $value) {
+    if (static::isRegisteredFormProperty($name)) {
+      static::loadFile($name);
+      return static::create($name, $value);
     }
     return $value;
   }
