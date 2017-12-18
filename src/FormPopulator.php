@@ -33,7 +33,7 @@ class FormPopulator {
    * data.
    *
    * @param array $form
-   *   The Drupal Form to populate
+   *   The Drupal Form to populate.
    *
    * @return array
    *   The populated Drupal Form.

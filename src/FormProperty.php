@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\objective_forms;
 
 /**
@@ -19,7 +20,7 @@ class FormProperty {
   public static function getRegisteredFormPropertiesTypes() {
     static $cache;
     if (empty($cache)) {
-      $cache = array();
+      $cache = [];
       foreach (\Drupal::moduleHandler()->getImplementations('objectify_properties') as $module) {
         $properties = \Drupal::moduleHandler()->invoke($module, 'objectify_properties');
         if (isset($properties) && is_array($properties)) {
@@ -116,4 +117,5 @@ class FormProperty {
     }
     return $value;
   }
+
 }

@@ -1,11 +1,11 @@
 <?php
+
 namespace Drupal\objective_forms;
 
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Stores data in the $form_state['storage'] for use in building/rendering the
- * Form.
+ * Stores data in the form state for use in building/rendering the Form.
  */
 class FormStorage {
   /**
@@ -14,25 +14,33 @@ class FormStorage {
   const STORAGE_ROOT = 'objective_form_storage';
 
   /**
-   * A reference to $form_state['storage'][STORAGE_ROOT], this is where all
-   * persistant data is kept.
+   * A reference to $form_state['storage'][STORAGE_ROOT].
+   *
+   * This is where all persistant data is kept.
    *
    * @var array
    */
   protected $storage;
 
-  protected $form_state;
+  /**
+   * The form state in which this storage instance lives.
+   *
+   * @var \Drupal\Core\Form\FormStateInterface
+   */
+  protected $formState;
 
   /**
    * Creates the FormStorage Singleton.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
+   * @param array $contents
+   *   Initial storage contents with which to initialize the storage.
    */
-  public function __construct(FormStateInterface $form_state, $contents = []) {
+  public function __construct(FormStateInterface $form_state, array $contents = []) {
     $this->initializeFormState($form_state, $contents);
-    $this->storage =& $form_state->get(['storage', self::STORAGE_ROOT]);
-    $this->form_state = $form_state;
+    $this->storage =& $form_state->get(['storage', static::STORAGE_ROOT]);
+    $this->formState = $form_state;
   }
 
   /**
@@ -40,10 +48,12 @@ class FormStorage {
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The Drupal Form State.
+   * @param array $contents
+   *   Initial storage contents with which to initialize the storage.
    */
-  protected function initializeFormState(FormStateInterface $form_state, $contents = []) {
-    if (!$form_state->has(['storage', self::STORAGE_ROOT])) {
-      $form_state->set(['storage', self::STORAGE_ROOT], $contents);
+  protected function initializeFormState(FormStateInterface $form_state, array $contents = []) {
+    if (!$form_state->has(['storage', static::STORAGE_ROOT])) {
+      $form_state->set(['storage', static::STORAGE_ROOT], $contents);
     }
   }
 

@@ -5,6 +5,8 @@
  * Utility functions.
  */
 
+use Drupal\Core\Render\Element;
+
 module_load_include('inc', 'php_lib', 'Array');
 
 /**
@@ -12,8 +14,7 @@ module_load_include('inc', 'php_lib', 'Array');
  *
  * @param array $form
  *   The Drupal Form.
- *
- * @param hash $hash
+ * @param string $hash
  *   The unique #hash property that identifies the FormElement.
  */
 function &find_element(array &$form, $hash) {
@@ -31,7 +32,7 @@ function &find_element(array &$form, $hash) {
  *
  * @param array $form
  *   A Drupal Form Element.
- * @param hash $hash
+ * @param string $hash
  *   The unique #hash property that identifies the FormElement.
  *
  * @return array
@@ -39,7 +40,7 @@ function &find_element(array &$form, $hash) {
  */
 function &find_child_element(array &$form, $hash) {
   $found = NULL;
-  $children = \Drupal\Core\Render\Element::children($form);
+  $children = Element::children($form);
   foreach ($children as $key) {
     $child = &$form[$key];
     $found = has_hash($child, $hash) ? $child : find_child_element($child, $hash);
@@ -58,7 +59,7 @@ function &find_child_element(array &$form, $hash) {
  *
  * @param array $element
  *   A Drupal Form Element.
- * @param hash $hash
+ * @param string $hash
  *   The unique #hash property that identifies the FormElement.
  *
  * @return bool
@@ -102,7 +103,6 @@ function form_element_name(array $element) {
  *
  * @param string $parent
  *   A Drupal form element name for the assumed parent form element.
- *
  * @param string $child
  *   A Drupal form element name for the assumed child form element.
  *

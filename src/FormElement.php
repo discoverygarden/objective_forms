@@ -1,27 +1,32 @@
 <?php
+
 namespace Drupal\objective_forms;
 
+use Drupal\Core\Render\Element;
 use Drupal\php_lib\ReadOnlyProtectedMembers;
+use ArrayAccess;
 
 /**
  * Encapsulates drupal form elements.
  */
-class FormElement implements \ArrayAccess {
+class FormElement implements ArrayAccess {
 
   /**
-   * Holds references to protected variables. Allows for external access and
-   * protected writes. parent -> Stores a reference to this FormElements Parent.
-   * NULL if no parent. hash -> A identifier that is unique to this object.
+   * Holds references to protected variables.
+   *
+   * Allows for external access and protected writes. Some known properties:
+   * - parent: Stores a reference to this FormElement's parent. NULL if no
+   *   parent.
+   * - hash: A identifier that is unique to this object.
    *
    * @var ReadOnlyProtected
    */
   protected $protected;
 
   /**
-   * Child FormElements, only objects of type FormElement are stored in this
-   * array.
+   * Child elements.
    *
-   * @var array
+   * @var FormElement[]
    */
   public $children;
 
@@ -50,8 +55,7 @@ class FormElement implements \ArrayAccess {
   protected $index;
 
   /**
-   * Holds references to the original form default value for the form
-   * element.
+   * Holds references to the original form default value for the form element.
    *
    * @var ReadOnlyProtected
    */
@@ -60,10 +64,17 @@ class FormElement implements \ArrayAccess {
   /**
    * Instantiate's a FormElement.
    *
+   * @param FormElementRegistry $registry
+   *   The registry of form elements.
    * @param array $form
    *   Drupal form definition.
+   * @param string|int $index
+   *   Index of the given element within its parents.
+   * @param array $parents
+   *   An array of element indexes indicating where this (root) element is
+   *   located in $form.
    */
-  public function __construct(FormElementRegistry $registry = NULL /* yuck fix this.. */, array $form = NULL, $index = NULL, $parents = []) {
+  public function __construct(FormElementRegistry $registry = NULL /* yuck fix this.. */, array $form = NULL, $index = NULL, array $parents = []) {
     $this->protected = new ReadOnlyProtectedMembers([
       'parent' => NULL,
       'hash' => NULL,
@@ -106,7 +117,7 @@ class FormElement implements \ArrayAccess {
    */
   protected function initializeControls(array &$form) {
     module_load_include('inc', 'objective_forms', 'FormProperty');
-    $properties = \Drupal\Core\Render\Element::properties($form);
+    $properties = Element::properties($form);
     foreach ($properties as $key) {
       // Objectify the property where appropriate.
       $this->controls[$key] = FormProperty::Expand($key, $form[$key]);
@@ -124,7 +135,7 @@ class FormElement implements \ArrayAccess {
    *   Drupal form definition.
    */
   protected function initializeChildren(array &$form) {
-    $children = \Drupal\Core\Render\Element::children($form);
+    $children = Element::children($form);
     foreach ($children as $key) {
       $child = new FormElement($this->registry, $form[$key], $key);
       $this->adopt($child, $key);
@@ -172,7 +183,7 @@ class FormElement implements \ArrayAccess {
    *
    * Searches this element and all of its children recursively.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return FormElement
@@ -224,14 +235,14 @@ class FormElement implements \ArrayAccess {
    * If the callback returns FALSE, then processing stops and this function
    * exits.
    *
-   * @param callback $function
+   * @param callable $function
    *   The function to be called repeatedly.
    *
    * @return bool
    *   TRUE if the function was called for all child FormElements, FALSE
    *   otherwise.
    */
-  public function eachChild($function) {
+  public function eachChild(callable $function) {
     // Remove function name from the argument list.
     $param_arr = array_slice(func_get_args(), 1);
     foreach ($this->children as $child) {
@@ -255,18 +266,18 @@ class FormElement implements \ArrayAccess {
    * If the callback returns FALSE, then processing stops and this function
    * exits.
    *
-   * @param callback $function
+   * @param callable $function
    *   The function to be called repeatedly.
    *
    * @return bool
    *   TRUE if the function was called for all controls/properties, FALSE
    *   otherwise.
    */
-  public function eachControl($function) {
+  public function eachControl(callable $function) {
     // Remove function name from the argument list.
     $param_arr = array_slice(func_get_args(), 1);
     foreach ($this->controls as $key => &$control) {
-      $args = array_merge(array($key, &$control), $param_arr);
+      $args = array_merge([$key, &$control], $param_arr);
       if (call_user_func_array($function, $args) === FALSE) {
         return FALSE;
       }
@@ -287,25 +298,25 @@ class FormElement implements \ArrayAccess {
    * If the callback returns FALSE, then processing stops and this function
    * exits.
    *
-   * @param callback $function
+   * @param callable $function
    *   The function to be called repeatedly.
    *
    * @return bool
    *   TRUE if the function was called for all decendants, FALSE otherwise.
    */
-  public function eachDecendant($function) {
+  public function eachDecendant(callable $function) {
     $func_args = func_get_args();
     // Remove function name from the argument list.
     $param_arr = array_slice($func_args, 1);
     $func_args = func_get_args();
     foreach ($this->children as $child) {
-      $args = array_merge(array($child), $param_arr);
+      $args = array_merge([$child], $param_arr);
       if (call_user_func_array($function, $args) === FALSE) {
         // End processing.
         return FALSE;
       }
       // Recurse...
-      if (call_user_func_array(array($child, 'eachDecendant'), $func_args) === FALSE) {
+      if (call_user_func_array([$child, 'eachDecendant'], $func_args) === FALSE) {
         // End processing.
         return FALSE;
       }
@@ -327,18 +338,18 @@ class FormElement implements \ArrayAccess {
    * If the callback returns FALSE, then processing stops and this function
    * exits.
    *
-   * @param callback $function
+   * @param callable $function
    *   The function to be called repeatedly.
    *
    * @return bool
    *   TRUE if the function was called for all decendants, FALSE otherwise.
    */
-  public function each($function) {
+  public function each(callable $function) {
     // Remove function name from the argument list.
     $param_arr = array_slice(func_get_args(), 1);
-    $args = array_merge(array($this), $param_arr);
+    $args = array_merge([$this], $param_arr);
     if (call_user_func_array($function, $args) === TRUE) {
-      return call_user_func_array(array($this, 'eachDecendant'), func_get_args());
+      return call_user_func_array([$this, 'eachDecendant'], func_get_args());
     }
     return FALSE;
   }
@@ -450,7 +461,7 @@ class FormElement implements \ArrayAccess {
    * $offsets exists.
    *
    * @param mixed $offset
-   *   The name of the child FormElement or control/property
+   *   The name of the child FormElement or control/property.
    *
    * @return bool
    *   TRUE if the child FormElement or control/property exists.
@@ -500,7 +511,7 @@ class FormElement implements \ArrayAccess {
     if (is_or_descends_from($value, __CLASS__)) {
       $this->adopt($value, $offset);
     }
-    elseif (\Drupal\Core\Render\Element::property($offset)) {
+    elseif (Element::property($offset)) {
       $this->controls[$offset] = $value;
     }
   }
@@ -647,7 +658,7 @@ class FormElement implements \ArrayAccess {
    *   array of children
    */
   public function toArray() {
-    $output = array('#hash' => $this->hash);
+    $output = ['#hash' => $this->hash];
     $this->addControlsToArray($output);
     $this->addChildrenToArray($output);
     return $output;
@@ -706,10 +717,10 @@ class FormElement implements \ArrayAccess {
     }
     else {
       if (isset($this['#tree']) && $this['#tree']) {
-        return array_merge($this->parent->getParentsArray(), array($this->getIndex()));
+        return array_merge($this->parent->getParentsArray(), [$this->getIndex()]);
       }
       else {
-        return array();
+        return [];
       }
     }
   }
@@ -720,4 +731,5 @@ class FormElement implements \ArrayAccess {
   public function getOriginalDefaultValue() {
     return $this->originalDefaultValue;
   }
+
 }

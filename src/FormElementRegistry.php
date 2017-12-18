@@ -1,8 +1,11 @@
 <?php
+
 namespace Drupal\objective_forms;
 
 /**
- * A class that holds a flat array of all FormElements created/cloned during
+ * Registry of managed form elements.
+ *
+ * Maintains flat array of all FormElements created/cloned during
  * the Form rendering/submission process. Also the history of cloned form
  * elements are tracked so that the original FormElement can be retrieved.
  */
@@ -16,10 +19,12 @@ class FormElementRegistry {
   protected $elements;
 
   /**
-   * The cloned history of a FormElement. Where the key is the FormElement's
-   * hash and its value is an array. The array values are the hashes of the
-   * FormElements that were cloned in order to clone this element.
-   * They are stored in the sequential order in which they were cloned.
+   * The cloned history of a FormElement.
+   *
+   * The key is the FormElement's hash and its value is an array. The array
+   * values are the hashes of the FormElements that were cloned in order to
+   * clone this element. They are stored in the sequential order in which they
+   * were cloned.
    *
    * @var array
    */
@@ -29,8 +34,8 @@ class FormElementRegistry {
    * Instantiate the FormElementRegistry.
    */
   public function __construct() {
-    $this->elements = array();
-    $this->cloned = array();
+    $this->elements = [];
+    $this->cloned = [];
   }
 
   /**
@@ -46,7 +51,7 @@ class FormElementRegistry {
   /**
    * Registers the newly cloned FormElement and logs the clone's ancestory.
    *
-   * @param hash $original
+   * @param string $original
    *   The hash of the FormElement the clone was created from.
    * @param FormElement $clone
    *   The newly cloned FormElement.
@@ -64,7 +69,7 @@ class FormElementRegistry {
    * object created.
    *
    * @param string $hash
-   *   The hash
+   *   The hash.
    */
   public function registerDestroyed($hash) {
     // @todo Implement...
@@ -73,7 +78,7 @@ class FormElementRegistry {
   /**
    * Checks to see if the element identified by hash exists in the registry.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return bool
@@ -86,7 +91,7 @@ class FormElementRegistry {
   /**
    * Get a registered FormElement identified by its hash.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return FormElement
@@ -105,7 +110,7 @@ class FormElementRegistry {
    * Checks to see if the form element identified by its hash is a clone of
    * another form element.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return bool
@@ -122,9 +127,8 @@ class FormElementRegistry {
    * Checks if a FormElement has a ancestor it was cloned from at the given
    * depth.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
-   *
    * @param int $depth
    *   The depth to look into the FormElements cloned ancestory.
    *
@@ -141,7 +145,7 @@ class FormElementRegistry {
   /**
    * Get's the ancestory of cloned FormElements for a particular FormElement.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return array
@@ -151,7 +155,7 @@ class FormElementRegistry {
     if ($this->isClone($hash)) {
       return $this->cloned[$hash];
     }
-    return array();
+    return [];
   }
 
   /**
@@ -160,9 +164,9 @@ class FormElementRegistry {
    * Sets the history for a given element and the hash of the element in which
    * it was cloned from.
    *
-   * @param hash $clone
+   * @param string $clone
    *   The unique #hash property that identifies the cloned FormElement.
-   * @param hash $original
+   * @param string $original
    *   The unique #hash property that identifies the FormElement the clone was
    *   created from.
    */
@@ -178,7 +182,7 @@ class FormElementRegistry {
    * Gets the ancestor this FormElement was cloned from at the given depth in
    * its cloned.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the cloned FormElement.
    * @param int $depth
    *   The position in the clone history to look for the ancestor.
@@ -200,7 +204,7 @@ class FormElementRegistry {
    *
    * If the element doesn't have a clone history, return the given form element.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the cloned FormElement.
    *
    * @return FormElement
@@ -222,7 +226,7 @@ class FormElementRegistry {
    * Clears the ancestory of the given FormElement, or if no FormElement is
    * provided the ancestory of all FormElements will be clear.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property of the form element whose history will be
    *   cleared. If NULL all history will be removed.
    */
@@ -231,7 +235,7 @@ class FormElementRegistry {
       unset($this->cloned[$hash]);
     }
     else {
-      $this->cloned = array();
+      $this->cloned = [];
     }
   }
 
