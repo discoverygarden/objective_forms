@@ -120,7 +120,7 @@ class FormElement implements ArrayAccess {
     $properties = Element::properties($form);
     foreach ($properties as $key) {
       // Objectify the property where appropriate.
-      $this->controls[$key] = FormProperty::Expand($key, $form[$key]);
+      $this->controls[$key] = FormProperty::expand($key, $form[$key]);
     }
     // Store the form fields default_value for access when populating defaults.
     if (isset($form["#default_value"])) {
