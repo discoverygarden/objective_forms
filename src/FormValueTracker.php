@@ -1,13 +1,12 @@
 <?php
 
-/**
- * @file
- * Defines the FormValueTracker class that is used by only the FormValues class.
- */
-
 namespace Drupal\objective_forms;
 
+use Drupal\Component\Utility\NestedArray;
+
 /**
+ * Helper to connect submitted values with elements.
+ *
  * This class utilizes scope and a reference pointer to track where
  * the current value for a given FormElement. Its used by the Form values
  * class where it is used to retrieve all the values of FormElements.
@@ -38,7 +37,7 @@ class FormValueTracker {
   /**
    * TRUE if we are tracking a location in the values array, FALSE if not.
    *
-   * @var boolean
+   * @var bool
    */
   protected $track;
 
@@ -46,7 +45,9 @@ class FormValueTracker {
    * Creates a FormValues instance.
    *
    * @param array $values
-   *   Array of values
+   *   Array of values.
+   * @param FormElementRegistry $registry
+   *   Registry of elements of which we are to track the values.
    */
   public function __construct(array &$values, FormElementRegistry $registry) {
     $this->values = &$values;
@@ -73,7 +74,8 @@ class FormValueTracker {
     }
 
     $form_element = $this->registry->get($element['#hash']);
-    $value = \Drupal\Component\Utility\NestedArray::getValue($this->current, $form_element->getParentsArray());
+    $value = NestedArray::getValue($this->current, $form_element->getParentsArray());
     return is_array($value) ? NULL : $value;
   }
+
 }

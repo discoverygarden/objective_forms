@@ -1,8 +1,8 @@
 name: 'Objective Forms'
 description: 'Provides functions and classes that allow Drupal Forms to be treated as objects.'
 dependencies:
-  - php_lib
-  - encryption
+  - :php_lib
+  - encryption:encryption
 package: 'Islandora Dependencies'
 core: 8.x
 php: '5.5.9'

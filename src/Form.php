@@ -1,15 +1,19 @@
 <?php
+
 namespace Drupal\objective_forms;
 
+use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\encryption\EncryptionTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Logger\LoggerChannelTrait;
 
+use ArrayAccess;
+
 /**
  * A Container for all the FormElements that comprise the form.
  */
-class Form implements \ArrayAccess {
+class Form implements ArrayAccess {
   use EncryptionTrait;
   use StringTranslationTrait;
   use LoggerChannelTrait;
@@ -44,8 +48,10 @@ class Form implements \ArrayAccess {
    *   The drupal form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The drupal form state.
+   * @param array $parents
+   *   An array of parent elements, if rendering the form under another form.
    */
-  public function __construct(array $form, FormStateInterface $form_state, $parents = array()) {
+  public function __construct(array $form, FormStateInterface $form_state, array $parents = []) {
     // XXX: We need to pull direct from input, as the form structure has not
     // yet been processed in order to obtain things through getValue(s), and
     // _cannot_ have been, since this gets into the issues with using hashes
@@ -79,7 +85,7 @@ class Form implements \ArrayAccess {
         $element = $this->findElement($form['#hash']);
         \Drupal::moduleHandler()->alter("form_element_{$element->type}_ajax", $element, $form, $form_state);
       }
-      foreach (\Drupal\Core\Render\Element::children($form) as $child) {
+      foreach (Element::children($form) as $child) {
         $this->ajaxAlter($form[$child], $form_state, $triggering_element);
       }
     }
@@ -88,7 +94,7 @@ class Form implements \ArrayAccess {
   /**
    * Seaches the form for the given form element.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return FormElement
@@ -104,7 +110,7 @@ class Form implements \ArrayAccess {
    * Checks to see if the FormElement identified by its unique $hash exists in
    * this form.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return bool
@@ -117,7 +123,7 @@ class Form implements \ArrayAccess {
   /**
    * Duplicates a FormElement identified by its unique $hash.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return FormElement
@@ -137,7 +143,7 @@ class Form implements \ArrayAccess {
    * Duplicates a FormElement identified by its unique $hash from its original
    * definition.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return FormElement
@@ -154,7 +160,7 @@ class Form implements \ArrayAccess {
   /**
    * Remove the FormElement identified by its unique $hash from this form.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return FormElement
@@ -172,9 +178,9 @@ class Form implements \ArrayAccess {
    * Validates the form.
    *
    * @param array $form
-   *   The form
+   *   The form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state
+   *   The form state.
    */
   public function validate(array &$form, FormStateInterface $form_state) {
     // Implemented in child classes.
@@ -184,9 +190,9 @@ class Form implements \ArrayAccess {
    * Submits the form.
    *
    * @param array $form
-   *   The form
+   *   The form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state
+   *   The form state.
    */
   public function submit(array &$form, FormStateInterface $form_state) {
     // Implemented in child classes.
@@ -244,7 +250,7 @@ class Form implements \ArrayAccess {
    * Checks if a child element or property identified by $name exists.
    *
    * @param mixed $name
-   *   The name
+   *   The name.
    *
    * @return bool
    *   TRUE if the child element or property exists FALSE otherwise.
@@ -257,7 +263,7 @@ class Form implements \ArrayAccess {
    * Removes a child element or property identified by $name.
    *
    * @param mixed $name
-   *   The name
+   *   The name.
    */
   public function __unset($name) {
     unset($this->root->$name);
@@ -267,7 +273,7 @@ class Form implements \ArrayAccess {
    * Gets a child element or property identified by $offset.
    *
    * @param mixed $name
-   *   The name
+   *   The name.
    */
   public function __get($name) {
     return $this->root->$name;
@@ -277,9 +283,9 @@ class Form implements \ArrayAccess {
    * Add/Set a child element or property identified by $offset, with $value.
    *
    * @param mixed $name
-   *   The name
+   *   The name.
    * @param mixed $value
-   *   The value
+   *   The value.
    */
   public function __set($name, $value) {
     $this->root->$name = $value;
@@ -289,7 +295,7 @@ class Form implements \ArrayAccess {
    * Checks if a child element or property identified by $offset exists.
    *
    * @param mixed $offset
-   *   The offset
+   *   The offset.
    *
    * @return bool
    *   TRUE if the child element or property exists FALSE otherwise.
@@ -302,7 +308,7 @@ class Form implements \ArrayAccess {
    * Gets a child element or property identified by $offset.
    *
    * @param mixed $offset
-   *   The offset
+   *   The offset.
    *
    * @return mixed
    *   Gets a child element or property identified by $offset if it exists
@@ -316,9 +322,9 @@ class Form implements \ArrayAccess {
    * Add/Set a child element or property identified by $offset, with $value.
    *
    * @param mixed $offset
-   *   The offset
+   *   The offset.
    * @param mixed $value
-   *   The value
+   *   The value.
    */
   public function offsetSet($offset, $value) {
     $this->root->offsetSet($offset, $value);
@@ -328,7 +334,7 @@ class Form implements \ArrayAccess {
    * Removes a child element or property identified by $offset.
    *
    * @param mixed $offset
-   *   The offset
+   *   The offset.
    */
   public function offsetUnset($offset) {
     $this->root->offsetUnset($offset);

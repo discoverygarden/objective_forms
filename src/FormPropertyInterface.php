@@ -1,11 +1,6 @@
 <?php
 
-/**
- * @file
- * Interface for converting FormElement properties.
- *
- * Converts into/between object/scalar values.
- */
+namespace Drupal\objective_forms;
 
 /**
  * An interface for FormProperties that want to be treated as objects.

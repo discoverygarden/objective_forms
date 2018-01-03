@@ -1,13 +1,15 @@
 <?php
+
 namespace Drupal\objective_forms;
 
+use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 
-use Drupal\objective_forms\FormValueTracker;
-
 /**
- * This class stores all submitted values. It provides a mechanism for
- * accessing submitted values with the FormElements hashes.
+ * This class stores all submitted values.
+ *
+ * It provides a mechanism for accessing submitted values with the FormElements
+ * hashes.
  */
 class FormValues {
 
@@ -21,7 +23,7 @@ class FormValues {
   /**
    * A helper class that matches values to elements.
    *
-   * @var FormValueTracker
+   * @var \Drupal\objective_forms\FormValueTracker
    */
   protected $tracker;
 
@@ -34,7 +36,7 @@ class FormValues {
    * @return bool
    *   TRUE if $form_state['values'] exists, FALSE otherwise.
    */
-  public static function Exists(FormStateInterface $form_state) {
+  public static function exists(FormStateInterface $form_state) {
     return $form_state->getValues() ? TRUE : FALSE;
   }
 
@@ -43,13 +45,14 @@ class FormValues {
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Drupal Form state.
-   *
    * @param array $root
    *   The elements to associate with submitted values.
+   * @param FormElementRegistry $registry
+   *   The registry of elements for which we contain values.
    */
   public function __construct(FormStateInterface $form_state, array &$root, FormElementRegistry $registry) {
-    $this->values = array();
-    if (self::Exists($form_state)) {
+    $this->values = [];
+    if (static::exists($form_state)) {
       $this->tracker = new FormValueTracker($form_state->getValues(), $registry);
       $this->setValues($root, $this->tracker);
     }
@@ -60,13 +63,12 @@ class FormValues {
    *
    * @param array $element
    *   An element in the Drupal Form.
-   *
-   * @param FormValueTracker $tracker
+   * @param \Drupal\objective_forms\FormValueTracker $tracker
    *   A helper class for extracting submitted values.
    */
   protected function setValues(array &$element, FormValueTracker $tracker) {
     $this->setValue($element, $tracker);
-    $children = \Drupal\Core\Render\Element::children($element);
+    $children = Element::children($element);
     foreach ($children as $key) {
       $child = &$element[$key];
       $this->setValues($child, clone $tracker);
@@ -78,8 +80,7 @@ class FormValues {
    *
    * @param array $element
    *   An element in the Drupal Form.
-   *
-   * @param FormValueTracker $tracker
+   * @param \Drupal\objective_forms\FormValueTracker $tracker
    *   A helper class for extracting submitted values.
    */
   protected function setValue(array &$element, FormValueTracker $tracker) {
@@ -92,7 +93,7 @@ class FormValues {
   /**
    * Is there a value associated with the given form element.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return bool
@@ -105,7 +106,7 @@ class FormValues {
   /**
    * Get the value associated with the given element.
    *
-   * @param hash $hash
+   * @param string $hash
    *   The unique #hash property that identifies the FormElement.
    *
    * @return mixed
