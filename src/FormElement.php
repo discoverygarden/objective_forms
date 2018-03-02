@@ -677,7 +677,7 @@ class FormElement implements ArrayAccess {
    */
   protected function addControlsToArray(array &$output) {
     foreach ($this->controls as $name => $value) {
-      $has_property_interface = has_interface($value, 'FormPropertyInterface');
+      $has_property_interface = is_a($value, 'Drupal\objective_forms\FormPropertyInterface');
       $output[$name] = $has_property_interface ? $value->toDrupalForm() : $value;
     }
   }
