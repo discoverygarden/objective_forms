@@ -5,5 +5,5 @@ dependencies:
   - encryption:encryption
 package: 'Islandora Dependencies'
 core: 8.x
-php: '5.5.9'
+php: '7.2'
 type: module
